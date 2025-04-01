@@ -16,23 +16,49 @@ document.addEventListener('DOMContentLoaded', function() {
     const monthSelectEl = document.getElementById('month-select');
     const todayBtn = document.getElementById('today-btn');
 
-    // Lista de audios (tu contenido)
+    // Colores litúrgicos
+    const liturgicalColors = {
+        'tn': '#8B0000',     // Rojo vino para Navidad
+        'to': '#556B2F',     // Verde olivo para Tiempo Ordinario
+        'tc': '#800080',     // Morado para Cuaresma
+        'tp': '#87CEEB',     // Azul cielo para Pascua
+        'ta': '#800080'      // Morado para Adviento
+    };
+
+    // Lista de audios con tiempo litúrgico
     const audios = [
-        // ... (tu lista completa de audios aquí)
+        /* Enero - Navidad (tn) */
+        { nombre: "Santa María, Madre de Dios", archivo: "/ev/tn/2/mie/audio.mp3", fecha: `2025-01-01`, tiempo: 'tp' },
+        { nombre: "Semana I de Navidad",        archivo: "/ev/tn/2/jue/audio.mp3", fecha: `2025-01-02`, tiempo: 'tn' },
+        { nombre: "Semana I de Navidad",        archivo: "/ev/tn/2/vie/audio.mp3", fecha: `2025-01-03`, tiempo: 'tn' },
+        { nombre: "Semana I de Navidad",        archivo: "/ev/tn/2/sab/audio.mp3", fecha: `2025-01-04`, tiempo: 'tn' },
+        { nombre: "Semana I de Navidad",        archivo: "/ev/tn/2/dom/audio.mp3", fecha: `2025-01-05`, tiempo: 'tn' },
+        { nombre: "La Epifanía del Señor",      archivo: "/ev/tn/2/lun/audio.mp3", fecha: `2025-01-06`, tiempo: 'tp' },
+        { nombre: "Después de la Epifanía",     archivo: "/ev/tn/2/mar/audio.mp3", fecha: `2025-01-07`, tiempo: 'tn' },
+        { nombre: "Después de la Epifanía",     archivo: "/ev/tn/2/mie/audio.mp3", fecha: `2025-01-08`, tiempo: 'tn' },
+        { nombre: "Después de la Epifanía",     archivo: "/ev/tn/2/jue/audio.mp3", fecha: `2025-01-09`, tiempo: 'tn' },
+        { nombre: "Después de la Epifanía",     archivo: "/ev/tn/2/vie/audio.mp3", fecha: `2025-01-10`, tiempo: 'tn' },
+        { nombre: "Después de la Epifanía",     archivo: "/ev/tn/2/sab/audio.mp3", fecha: `2025-01-11`, tiempo: 'tn' },
 
-/* Enero*/
+        /* TIEMPO ORDINARIO */
 
-        { nombre: "Santa Maria Madre de Dios", archivo: "/ev/tc/4/mar/audio.mp3", fecha: `${year}-04-01` },
-
-
-        { nombre: "IV Semana de Cuaresma", archivo: "/ev/tc/4/mar/audio.mp3", fecha: `2025-04-01` },
-        { nombre: "IV Semana de Cuaresma", archivo: "/ev/tc/4/mie/audio.mp3", fecha: `2025-04-02` },
-        { nombre: "IV Semana de Cuaresma", archivo: "/ev/tc/4/jue/audio.mp3", fecha: `2025-04-03` },
-        { nombre: "IV Semana de Cuaresma", archivo: "/ev/tc/4/jue/audio.mp3", fecha: `2025-04-04` },
-
-        { nombre: "IV Semana de Cuaresma", archivo: "/ev/tc/4/jue/audio.mp3", fecha: `2026-04-01` },
-
-        // ... resto de tus audios
+        { nombre: "El Bautismo del Señor",          archivo: "/ev/to/1/dom/audio.mp3", fecha: `2025-01-12`, tiempo: 'tp' },
+        { nombre: "Tiempo Ordinario, Semana I",     archivo: "/ev/to/1/lun/audio.mp3", fecha: `2025-01-13`, tiempo: 'to' },
+        { nombre: "Tiempo Ordinario, Semana I",     archivo: "/ev/to/1/mar/audio.mp3", fecha: `2025-01-14`, tiempo: 'to' },
+        
+        /* Abril - Cuaresma (tc) */
+        { nombre: "IV Semana de Cuaresma", archivo: "/ev/tc/4/mar/audio.mp3", fecha: `2025-04-01`, tiempo: 'tc' },
+        { nombre: "IV Semana de Cuaresma", archivo: "/ev/tc/4/mie/audio.mp3", fecha: `2025-04-02`, tiempo: 'tc' },
+        { nombre: "IV Semana de Cuaresma", archivo: "/ev/tc/4/jue/audio.mp3", fecha: `2025-04-03`, tiempo: 'tc' },
+        { nombre: "IV Semana de Cuaresma", archivo: "/ev/tc/4/vie/audio.mp3", fecha: `2025-04-04`, tiempo: 'tc' },
+        
+        /* Abril 2026 - Cuaresma (tc) */
+        { nombre: "IV Semana de Cuaresma", archivo: "/ev/tc/4/jue/audio.mp3", fecha: `2026-04-01`, tiempo: 'tc' },
+        
+        /* Ejemplos adicionales */
+        { nombre: "Domingo de Pascua", archivo: "/ev/tp/1/dom/audio.mp3", fecha: `2025-04-20`, tiempo: 'tp' },
+        { nombre: "Tiempo Ordinario", archivo: "/ev/to/10/lun/audio.mp3", fecha: `2025-06-09`, tiempo: 'to' },
+        { nombre: "Primer Domingo de Adviento", archivo: "/ev/ta/1/dom/audio.mp3", fecha: `2025-11-30`, tiempo: 'ta' }
     ];
 
     // Nombres de los meses
@@ -46,7 +72,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Inicializar selectores de año y mes
     function initSelectors() {
-        // Años disponibles (puedes ajustar según necesites)
+        // Años disponibles
         const years = [year - 1, year, year + 1];
         years.forEach(y => {
             const option = document.createElement('option');
@@ -66,13 +92,30 @@ document.addEventListener('DOMContentLoaded', function() {
         monthSelectEl.value = currentMonth;
     }
 
+    // Determinar el tiempo litúrgico basado en la ruta del archivo
+    function getLiturgicalTime(audio) {
+        if (!audio) return null;
+        
+        // Si ya tiene la propiedad tiempo, usarla
+        if (audio.tiempo) return audio.tiempo;
+        
+        // Determinar por la ruta del archivo
+        const path = audio.archivo.toLowerCase();
+        if (path.includes('/tn/')) return 'tn';
+        if (path.includes('/to/')) return 'to';
+        if (path.includes('/tc/')) return 'tc';
+        if (path.includes('/tp/')) return 'tp';
+        if (path.includes('/ta/')) return 'ta';
+        return null;
+    }
+
     // Generar el calendario
     function generateCalendar(year, month) {
         calendarEl.innerHTML = '';
         monthYearEl.textContent = `${monthNames[month]} ${year}`;
 
         // Encabezados de los días
-        ['Domingo', 'Lunes', 'Martes', 'Miécoles', 'Jueves', 'Viernes', 'Sábado'].forEach(day => {
+        ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'].forEach(day => {
             const dayHeader = document.createElement('div');
             dayHeader.className = 'day-header';
             dayHeader.textContent = day;
@@ -97,11 +140,17 @@ document.addEventListener('DOMContentLoaded', function() {
             const currentDate = new Date(year, month, date);
             const dateStr = formatDate(currentDate);
             const audioForDay = audios.find(audio => audio.fecha === dateStr);
+            const tiempo = getLiturgicalTime(audioForDay);
+
+            // Aplicar color de fondo según el tiempo litúrgico
+            if (tiempo && liturgicalColors[tiempo]) {
+                dayEl.style.backgroundColor = liturgicalColors[tiempo] + '20'; // Agrega transparencia
+                dayEl.style.borderLeft = `3px solid ${liturgicalColors[tiempo]}`;
+            }
 
             // Resaltar día actual
             if (currentDate.toDateString() === today.toDateString()) {
                 dayEl.classList.add('today');
-                // Reproducir audio del día actual
                 if (audioForDay) {
                     playAudio(audioForDay, currentDate);
                 }
@@ -131,6 +180,14 @@ document.addEventListener('DOMContentLoaded', function() {
         audioTitleEl.textContent = `${dayNames[date.getDay()]} ${date.getDate()} de ${monthNames[date.getMonth()]}: ${audio.nombre}`;
         audioElementEl.src = audio.archivo;
         audioElementEl.load();
+        
+        // Cambiar color del reproductor según el tiempo litúrgico
+        const tiempo = getLiturgicalTime(audio);
+        if (tiempo && liturgicalColors[tiempo]) {
+            audioPlayerEl.style.backgroundColor = liturgicalColors[tiempo] + '20';
+            audioPlayerEl.style.borderLeft = `5px solid ${liturgicalColors[tiempo]}`;
+        }
+        
         audioPlayerEl.style.display = 'block';
     }
 
@@ -190,3 +247,8 @@ document.addEventListener('DOMContentLoaded', function() {
     initSelectors();
     generateCalendar(currentYear, currentMonth);
 });
+
+// Cambia esto
+const audioPlayerEl = document.getElementById('audio-player');
+
+// Por esto (no es necesario cambiar esto si mantienes el mismo ID)
