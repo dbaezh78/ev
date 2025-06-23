@@ -9,8 +9,22 @@
 </head>
 <body>
     <div class="container">
-        <h1>Evangelios del Año</h1>
-        
+
+                <h2 style="text-align: center;">Evangelios del Año</h2>
+
+                <div id="audio-player">
+            <h3 id="audio-title"></h3>
+            <audio style="width: 100%;"  id="audio-element" controls>
+                <source id="audio-source" src="" type="audio/mpeg">
+                Tu navegador no soporta el elemento de audio.
+            </audio>
+        </div>
+
+        <h2 id="month-year"></h2>
+
+        <div class="calendar" id="calendar"></div>
+
+<br>
         <div class="calendar-controls">
             <div class="year-selector">
                 <label for="year-select">Año:</label>
@@ -24,18 +38,7 @@
             <button id="prev-month">‹</button>
             <button id="next-month">›</button>
         </div>
-        
-        <h2 id="month-year"></h2>
-        
-        <div class="calendar" id="calendar"></div>
-        
-        <div id="audio-player">
-            <h3 id="audio-title"></h3>
-            <audio style="width: 100%;"  id="audio-element" controls>
-                <source id="audio-source" src="" type="audio/mpeg">
-                Tu navegador no soporta el elemento de audio.
-            </audio>
-        </div>
+
     </div>
 
     <script src="liturgical-calendar.js"></script>
